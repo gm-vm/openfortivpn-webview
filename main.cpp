@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     QCommandLineParser parser;
-    parser.addPositionalArgument("gateway", "VPN gateway, possibly including port and realm");
+    parser.addPositionalArgument("url", "The SAML URL for the single sign-on authentication.");
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOption(QCommandLineOption("remote-debugging-port", "Remote debugging server port"));
@@ -35,12 +35,11 @@ int main(int argc, char *argv[])
     if (parser.positionalArguments().size() < 1) {
         parser.showHelp(1);
     }
-    QString gateway = parser.positionalArguments()[0];
-    QString samlUrl = "https://" + gateway + "/remote/saml/start";
+    QString url = parser.positionalArguments()[0];
 
     MainWindow w;
 
-    w.loadUrl(samlUrl);
+    w.loadUrl(url);
     w.resize(1024, 760);
     w.move(findScreenWithCursor()->geometry().center() - w.rect().center());
     w.show();
