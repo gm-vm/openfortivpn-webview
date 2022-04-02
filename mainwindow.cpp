@@ -10,9 +10,10 @@
 #include <QWebEngineView>
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(bool keepOpen, QWidget *parent) :
     QMainWindow(parent),
-    webEngine(new QWebEngineView(parent))
+    webEngine(new QWebEngineView(parent)),
+    keepOpen(keepOpen)
 {
     setCentralWidget(webEngine);
 
@@ -29,7 +30,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(webEngine, &QWebEngineView::titleChanged, this, &MainWindow::updateTitle);
     connect(webEngine, &QWebEngineView::urlChanged, this, &MainWindow::handleUrlChange);
-    connect(webEngineProfile->cookieStore(), &QWebEngineCookieStore::cookieAdded, this, &MainWindow::newCookieHandler);
+
+    connect(webEngineProfile->cookieStore(), &QWebEngineCookieStore::cookieAdded, this,
+            &MainWindow::onCookieAdded);
+    connect(webEngineProfile->cookieStore(), &QWebEngineCookieStore::cookieRemoved, this,
+            &MainWindow::onCookieRemoved);
 }
 
 void MainWindow::loadUrl(const QString &url)
@@ -37,21 +42,29 @@ void MainWindow::loadUrl(const QString &url)
     webEngine->setUrl(url);
 }
 
-void MainWindow::newCookieHandler(const QNetworkCookie &cookie)
+void MainWindow::onCookieAdded(const QNetworkCookie &cookie)
 {
     if (cookie.name() == "SVPNCOOKIE") {
         svpncookie = QString(cookie.name()) + "=" + QString(cookie.value());
     }
 }
 
+void MainWindow::onCookieRemoved(const QNetworkCookie &cookie)
+{
+    if (cookie.name() == "SVPNCOOKIE") {
+        svpncookie = QString();
+    }
+}
+
 void MainWindow::handleUrlChange(const QUrl &url)
 {
     if (url.toString().endsWith("/sslvpn/portal.html")) {
-        if (svpncookie.isEmpty()) {
-            QApplication::exit(1);
-        } else {
+        bool hasCookieSet = !svpncookie.isEmpty();
+        if (hasCookieSet) {
             std::cout << svpncookie.toStdString() << std::endl;
-            QApplication::exit(0);
+        }
+        if (!keepOpen) {
+            QApplication::exit(hasCookieSet ? 0 : 1);
         }
     }
 }
@@ -87,5 +100,5 @@ void MainWindow::createMenuBar()
 
 void MainWindow::closeEvent(QCloseEvent *)
 {
-    QApplication::exit(1);
+    QApplication::exit(keepOpen ? 0 : 1);
 }

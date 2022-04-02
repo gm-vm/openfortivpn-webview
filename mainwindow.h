@@ -9,16 +9,18 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(bool keepOpen, QWidget *parent = nullptr);
     void loadUrl(const QString &url);
 
 private slots:
-    void newCookieHandler(const QNetworkCookie &cookie);
+    void onCookieAdded(const QNetworkCookie &cookie);
+    void onCookieRemoved(const QNetworkCookie &cookie);
     void updateTitle(const QString &title);
     void handleUrlChange(const QUrl &url);
 
 private:
     QWebEngineView *webEngine;
+    bool keepOpen;
     QString svpncookie;
 
     void createMenuBar();

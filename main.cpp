@@ -27,11 +27,13 @@ int main(int argc, char *argv[])
 
     auto optionRealm = QCommandLineOption("realm", "The authentication realm.", "realm");
     auto optionUrl = QCommandLineOption("url", "The already built SAML URL.\nThis takes precedence over [host:port].", "url");
+    auto optionKeepOpen = QCommandLineOption("keep-open", "Do not close the browser automatically.");
 
     QCommandLineParser parser;
     parser.addPositionalArgument("host", "The VPN gateway host with an optional port.", "[host:port]");
     parser.addOption(optionRealm);
     parser.addOption(optionUrl);
+    parser.addOption(optionKeepOpen);
     parser.addOption(QCommandLineOption("remote-debugging-port", "Remote debugging server port."));
     parser.addHelpOption();
     parser.addVersionOption();
@@ -56,7 +58,9 @@ int main(int argc, char *argv[])
         }
     }
 
-    MainWindow w;
+    bool keepOpen = parser.isSet(optionKeepOpen);
+
+    MainWindow w(keepOpen);
 
     w.loadUrl(url);
     w.resize(1024, 760);
