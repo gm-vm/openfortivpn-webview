@@ -25,17 +25,36 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+    auto optionRealm = QCommandLineOption("realm", "The authentication realm.", "realm");
+    auto optionUrl = QCommandLineOption("url", "The already built SAML URL.\nThis takes precedence over [host:port].", "url");
+
     QCommandLineParser parser;
-    parser.addPositionalArgument("url", "The SAML URL for the single sign-on authentication.");
+    parser.addPositionalArgument("host", "The VPN gateway host with an optional port.", "[host:port]");
+    parser.addOption(optionRealm);
+    parser.addOption(optionUrl);
+    parser.addOption(QCommandLineOption("remote-debugging-port", "Remote debugging server port."));
     parser.addHelpOption();
     parser.addVersionOption();
-    parser.addOption(QCommandLineOption("remote-debugging-port", "Remote debugging server port"));
-    parser.parse(QCoreApplication::arguments());
 
-    if (parser.positionalArguments().size() < 1) {
+    if (!parser.parse(QCoreApplication::arguments())) {
         parser.showHelp(1);
     }
-    QString url = parser.positionalArguments()[0];
+
+    if (parser.isSet("help")) {
+        parser.showHelp(0);
+    }
+
+    QString url = parser.value(optionUrl);
+    if (url.isEmpty()) {
+        if (parser.positionalArguments().size() < 1) {
+            parser.showHelp(1);
+        }
+        url = "https://" + parser.positionalArguments()[0] + "/remote/saml/start";
+        QString realm = parser.value(optionRealm);
+        if (!realm.isEmpty()) {
+            url += "?realm=" + realm;
+        }
+    }
 
     MainWindow w;
 
