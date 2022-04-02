@@ -15,9 +15,11 @@ public:
 private slots:
     void newCookieHandler(const QNetworkCookie &cookie);
     void updateTitle(const QString &title);
+    void handleUrlChange(const QUrl &url);
 
 private:
     QWebEngineView *webEngine;
+    QString svpncookie;
 
     void createMenuBar();
     void closeEvent(QCloseEvent *);

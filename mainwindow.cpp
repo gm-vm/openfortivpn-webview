@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     webEngineProfile->setPersistentStoragePath(appDataLocation);
 
     connect(webEngine, &QWebEngineView::titleChanged, this, &MainWindow::updateTitle);
+    connect(webEngine, &QWebEngineView::urlChanged, this, &MainWindow::handleUrlChange);
     connect(webEngineProfile->cookieStore(), &QWebEngineCookieStore::cookieAdded, this, &MainWindow::newCookieHandler);
 }
 
@@ -39,9 +40,19 @@ void MainWindow::loadUrl(const QString &url)
 void MainWindow::newCookieHandler(const QNetworkCookie &cookie)
 {
     if (cookie.name() == "SVPNCOOKIE") {
-        QString cookieString = QString(cookie.name()) + "=" + QString(cookie.value());
-        std::cout << cookieString.toStdString() << std::endl;
-        QApplication::exit(0);
+        svpncookie = QString(cookie.name()) + "=" + QString(cookie.value());
+    }
+}
+
+void MainWindow::handleUrlChange(const QUrl &url)
+{
+    if (url.toString().endsWith("/sslvpn/portal.html")) {
+        if (svpncookie.isEmpty()) {
+            QApplication::exit(1);
+        } else {
+            std::cout << svpncookie.toStdString() << std::endl;
+            QApplication::exit(0);
+        }
     }
 }
 
