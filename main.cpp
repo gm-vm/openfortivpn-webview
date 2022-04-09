@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     parser.addOption(optionUrlRegex);
     parser.addOption(optionUrl);
     parser.addOption(optionKeepOpen);
-    parser.addOption(QCommandLineOption("remote-debugging-port", "Remote debugging server port."));
+    parser.addOption(QCommandLineOption("remote-debugging-port", "Remote debugging server port.", "port"));
     parser.addHelpOption();
     parser.addVersionOption();
 
