@@ -44,3 +44,9 @@ The application exits automatically as soon as it prints `SVPNCOOKIE` to
 stdout. You can change this behavior passing `--keep-open`. The application
 will in this case stay open and keep printing `SVPNCOOKIE` as its value
 changes, thus generating a stream of text.
+
+If you are allowed to only have a single active session at a time and are
+presented with a prompt when trying to start multiple sessions, you can
+use the `--wait-url` option. The application will in this case wait for
+`/sslvpn/portal.html` to be loaded before printing `SVPNCOOKIE`.
+If you need to wait for a different URL, use the `--url-regex` option.

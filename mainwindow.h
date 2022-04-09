@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QRegularExpression>
 #include <QWebEngineView>
 
 class MainWindow : public QMainWindow
@@ -9,7 +10,9 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(bool keepOpen, QWidget *parent = nullptr);
+    explicit MainWindow(const bool keepOpen,
+                        const QRegularExpression *urlToWaitForRegex = nullptr,
+                        QWidget *parent = nullptr);
     ~MainWindow();
     void loadUrl(const QString &url);
 
@@ -21,8 +24,10 @@ private slots:
 
 private:
     QWebEngineView *webEngine;
-    bool keepOpen;
+    const QRegularExpression *urlToWaitForRegex;
+    const bool keepOpen;
     QString svpncookie;
+    bool didSeeUrlToWaitFor = false;
 
     void createMenuBar();
     void closeEvent(QCloseEvent *);

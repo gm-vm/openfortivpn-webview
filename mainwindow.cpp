@@ -10,9 +10,12 @@
 #include <QWebEngineView>
 #include <iostream>
 
-MainWindow::MainWindow(bool keepOpen, QWidget *parent) :
+MainWindow::MainWindow(const bool keepOpen,
+                       const QRegularExpression *urlToWaitForRegex,
+                       QWidget *parent) :
     QMainWindow(parent),
     webEngine(new QWebEngineView(parent)),
+    urlToWaitForRegex(urlToWaitForRegex),
     keepOpen(keepOpen)
 {
     setCentralWidget(webEngine);
@@ -51,6 +54,14 @@ void MainWindow::onCookieAdded(const QNetworkCookie &cookie)
 {
     if (cookie.name() == "SVPNCOOKIE") {
         svpncookie = QString(cookie.name()) + "=" + QString(cookie.value());
+
+        // This should maybe also check that the cookie is not empty.
+        if (urlToWaitForRegex == nullptr || didSeeUrlToWaitFor) {
+            std::cout << svpncookie.toStdString() << std::endl;
+            if (!keepOpen) {
+                QApplication::exit(0);
+            }
+        }
     }
 }
 
@@ -63,7 +74,10 @@ void MainWindow::onCookieRemoved(const QNetworkCookie &cookie)
 
 void MainWindow::handleUrlChange(const QUrl &url)
 {
-    if (url.toString().endsWith("/sslvpn/portal.html")) {
+    if (urlToWaitForRegex == nullptr || didSeeUrlToWaitFor) return;
+
+    if (urlToWaitForRegex->match(url.toString()).hasMatch()) {
+        didSeeUrlToWaitFor = true;
         bool hasCookieSet = !svpncookie.isEmpty();
         if (hasCookieSet) {
             std::cout << svpncookie.toStdString() << std::endl;
