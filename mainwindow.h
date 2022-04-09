@@ -10,6 +10,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(bool keepOpen, QWidget *parent = nullptr);
+    ~MainWindow();
     void loadUrl(const QString &url);
 
 private slots:

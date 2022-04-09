@@ -37,6 +37,11 @@ MainWindow::MainWindow(bool keepOpen, QWidget *parent) :
             &MainWindow::onCookieRemoved);
 }
 
+MainWindow::~MainWindow()
+{
+    delete webEngine;
+}
+
 void MainWindow::loadUrl(const QString &url)
 {
     webEngine->setUrl(url);
