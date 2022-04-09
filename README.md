@@ -37,7 +37,7 @@ By default the application builds the SAML URL using the given host,
 port and realm. You can alternatively provide an already built URL:
 
 ```sh
-openfortivpn-webview --url 'https://vpn-gateway:1234/saml/start?realm=foo'
+openfortivpn-webview --url 'https://vpn-gateway:1234/remote/saml/start?realm=foo'
 ```
 
 The application exits automatically as soon as it prints `SVPNCOOKIE` to
