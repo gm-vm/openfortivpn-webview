@@ -11,7 +11,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(const bool keepOpen,
-                        const QRegularExpression *urlToWaitForRegex = nullptr,
+                        const QRegularExpression& urlToWaitForRegex,
                         QWidget *parent = nullptr);
     ~MainWindow();
     void loadUrl(const QString &url);
@@ -24,7 +24,7 @@ private slots:
 
 private:
     QWebEngineView *webEngine;
-    const QRegularExpression *urlToWaitForRegex;
+    const QRegularExpression& urlToWaitForRegex;
     const bool keepOpen;
     QString svpncookie;
     bool didSeeUrlToWaitFor = false;

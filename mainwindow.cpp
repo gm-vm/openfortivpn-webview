@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QDebug>
+#include <QLoggingCategory>
 #include <QMenuBar>
 #include <QStandardPaths>
 #include <QTextStream>
@@ -10,8 +11,10 @@
 #include <QWebEngineView>
 #include <iostream>
 
+Q_LOGGING_CATEGORY(category, "webview")
+
 MainWindow::MainWindow(const bool keepOpen,
-                       const QRegularExpression *urlToWaitForRegex,
+                       const QRegularExpression& urlToWaitForRegex,
                        QWidget *parent) :
     QMainWindow(parent),
     webEngine(new QWebEngineView(parent)),
@@ -55,8 +58,10 @@ void MainWindow::onCookieAdded(const QNetworkCookie &cookie)
     if (cookie.name() == "SVPNCOOKIE") {
         svpncookie = QString(cookie.name()) + "=" + QString(cookie.value());
 
+        qCDebug(category) << "SVPNCOOKIE has been received";
+
         // This should maybe also check that the cookie is not empty.
-        if (urlToWaitForRegex == nullptr || didSeeUrlToWaitFor) {
+        if (didSeeUrlToWaitFor) {
             std::cout << svpncookie.toStdString() << std::endl;
             if (!keepOpen) {
                 QApplication::exit(0);
@@ -68,15 +73,19 @@ void MainWindow::onCookieAdded(const QNetworkCookie &cookie)
 void MainWindow::onCookieRemoved(const QNetworkCookie &cookie)
 {
     if (cookie.name() == "SVPNCOOKIE") {
+        qCDebug(category) << "SVPNCOOKIE has been removed";
         svpncookie = QString();
     }
 }
 
 void MainWindow::handleUrlChange(const QUrl &url)
 {
-    if (urlToWaitForRegex == nullptr || didSeeUrlToWaitFor) return;
+    qCDebug(category) << url.toString();
 
-    if (urlToWaitForRegex->match(url.toString()).hasMatch()) {
+    if (didSeeUrlToWaitFor) return;
+
+    if (urlToWaitForRegex.match(url.toString()).hasMatch()) {
+        qCDebug(category) << "The current URL matches the given regex";
         didSeeUrlToWaitFor = true;
         bool hasCookieSet = !svpncookie.isEmpty();
         if (hasCookieSet) {

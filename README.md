@@ -21,7 +21,7 @@ make
 The above should generate the `openfortivpn-webview` executable.
 
 
-## Examples
+## Usage
 
 Obtain `SVPNCOOKIE` for host `vpn-gateway`:
 ```sh
@@ -45,8 +45,16 @@ stdout. You can change this behavior passing `--keep-open`. The application
 will in this case stay open and keep printing `SVPNCOOKIE` as its value
 changes, thus generating a stream of text.
 
-If you are allowed to only have a single active session at a time and are
-presented with a prompt when trying to start multiple sessions, you can
-use the `--wait-url` option. The application will in this case wait for
-`/sslvpn/portal.html` to be loaded before printing `SVPNCOOKIE`.
-If you need to wait for a different URL, use the `--url-regex` option.
+The application does not print `SVPNCOOKIE` until it finds a URL matching
+the regular expression passed to `--url-regex`. If no regular expression
+is specified, the application will look for URLs containing `/sslvpn/portal.html`.
+Waiting for such URL allows to deal with concurrent VPN sessions when the
+gateway is configured to allow a single active session.
+
+Do note that the inner Chromium engine may print a lot of messages. If you want
+to see only the messages of the application, set the `QT_LOGGING_RULES` and
+`QTWEBENGINE_CHROMIUM_FLAGS` env variables:
+```
+QT_LOGGING_RULES="*=false;webview=true" QTWEBENGINE_CHROMIUM_FLAGS="--enable-logging --log-level=3" ./openfortivpn-webview vpn-gateway
+```
+This is useful when trying to find out the proper value for `--url-regex`.

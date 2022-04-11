@@ -29,15 +29,13 @@ int main(int argc, char *argv[])
     auto optionRealm = QCommandLineOption("realm", "The authentication realm.", "realm");
     auto optionUrl = QCommandLineOption("url", "The already built SAML URL.\nThis takes precedence over [host:port].", "url");
     auto optionKeepOpen = QCommandLineOption("keep-open", "Do not close the browser automatically.");
-    auto optionWaitForUrl = QCommandLineOption({"w", "wait-url"}, "Wait for the URL matching <url-regex> before printing the cookie.");
     auto defaultUrlRegex = "/sslvpn/portal\\.html";
-    auto urlRegexDescription = QString("A regex to detect the URL to wait for.\nThe default is \"%1\".").arg(defaultUrlRegex);
+    auto urlRegexDescription = QString("A regex to detect the URL that needs to be visited before printing SVPNCOOKIE.\nThe default is \"%1\".").arg(defaultUrlRegex);
     auto optionUrlRegex = QCommandLineOption("url-regex", urlRegexDescription, "url-regex", defaultUrlRegex);
 
     QCommandLineParser parser;
     parser.addPositionalArgument("host", "The VPN gateway host with an optional port.", "[host:port]");
     parser.addOption(optionRealm);
-    parser.addOption(optionWaitForUrl);
     parser.addOption(optionUrlRegex);
     parser.addOption(optionUrl);
     parser.addOption(optionKeepOpen);
@@ -66,19 +64,14 @@ int main(int argc, char *argv[])
     }
 
     bool keepOpen = parser.isSet(optionKeepOpen);
-    bool waitForUrl = parser.isSet(optionWaitForUrl);
 
-    auto urlRegex = QRegularExpression();
-    if (waitForUrl) {
-        QString pattern = parser.value(optionUrlRegex);
-        urlRegex.setPattern(pattern);
-        if (!urlRegex.isValid()) {
-            std::cerr << "The given <url-regex> is not valid." << std::endl;
-            exit(1);
-        }
+    auto urlRegex = QRegularExpression(parser.value(optionUrlRegex));
+    if (!urlRegex.isValid()) {
+        std::cerr << "The given <url-regex> is not valid." << std::endl;
+        exit(1);
     }
 
-    MainWindow w(keepOpen, waitForUrl ? &urlRegex : nullptr);
+    MainWindow w(keepOpen, urlRegex);
     w.loadUrl(url);
     w.resize(1024, 760);
     w.move(findScreenWithCursor()->geometry().center() - w.rect().center());
