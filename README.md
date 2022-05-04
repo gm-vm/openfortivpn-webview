@@ -5,20 +5,12 @@ The application will simply open the SAML page to let you sign in.
 As soon as the `SVPNCOOKIE` is set, the application will print it to
 stdout and exit.
 
+The application comes in two flavors:
+ - [openfortivpn-webview-qt](openfortivpn-webview-qt/)
+ - [openfortivpn-webview-electron](openfortivpn-webview-electron/)
 
-## How to build
-
-The project requires the Qt framework to be installed and it has
-been tested with Qt 5.12.2.
-
-To build the application, go to the root of the project and run:
-```shell
-qmake .
-# There should now be a Makefile if qmake has succeded
-make
-```
-
-The above should generate the `openfortivpn-webview` executable.
+They should be equivalent, but `openfortivpn-webview-qt` may have
+some issues with some SAML providers.
 
 
 ## Usage
@@ -51,10 +43,14 @@ is specified, the application will look for URLs containing `/sslvpn/portal.html
 Waiting for such URL allows to deal with concurrent VPN sessions when the
 gateway is configured to allow a single active session.
 
-Do note that the inner Chromium engine may print a lot of messages. If you want
-to see only the messages of the application, set the `QT_LOGGING_RULES` and
-`QTWEBENGINE_CHROMIUM_FLAGS` env variables:
+
+The inner Chromium engine may print a lot of messages. You can disable them
+to only see the messages of the application.
+
+```sh
+# If you use the Qt variant
+QT_LOGGING_RULES="*=false;webview=true" QTWEBENGINE_CHROMIUM_FLAGS="--enable-logging --log-level=3" openfortivpn-webview vpn-gateway
+
+# If you use the Electron variant
+openfortivpn-webview --enable-logging --log-level=3 vpn-gateway
 ```
-QT_LOGGING_RULES="*=false;webview=true" QTWEBENGINE_CHROMIUM_FLAGS="--enable-logging --log-level=3" ./openfortivpn-webview vpn-gateway
-```
-This is useful when trying to find out the proper value for `--url-regex`.
