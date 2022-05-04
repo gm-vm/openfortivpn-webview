@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QNetworkCookie>
 #include <QRegularExpression>
 #include <QWebEngineView>
 

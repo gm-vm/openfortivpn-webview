@@ -3,7 +3,6 @@
 #include <QCommandLineOption>
 #include <QCommandLineParser>
 #include <QCursor>
-#include <QDesktopWidget>
 #include <QRect>
 #include <QScreen>
 #include <iostream>
@@ -19,7 +18,7 @@ static QScreen *findScreenWithCursor()
         }
     }
 
-    return QApplication::desktop()->screen();
+    return QApplication::primaryScreen();
 }
 
 int main(int argc, char *argv[])
