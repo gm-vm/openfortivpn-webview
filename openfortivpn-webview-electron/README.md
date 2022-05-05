@@ -19,9 +19,9 @@ node index.js
 ```
 
 You can also build a package for your system using `electron-builder`.
-For example, to build a `tar.xz` for Linux, run:
+For example, to build an `AppImage` and `tar.xz` for Linux, run:
 ```shell
-./node_modules/.bin/electron-builder --linux tar.xz
+./node_modules/.bin/electron-builder --linux AppImage tar.xz
 ```
 
 This will generate a portable `tar.xz` in `dist/`.
