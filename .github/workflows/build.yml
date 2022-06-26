@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  push:
+    tags: [ "v*-electron" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Repository checkout
+      uses: actions/checkout@v3
+
+    - name: Install Node.js and npm
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+        cache: 'npm'
+        cache-dependency-path: ./openfortivpn-webview-electron/package-lock.json
+
+    - name: Install dependencies
+      working-directory: ./openfortivpn-webview-electron
+      run: npm install
+
+    - name: Build the app
+      working-directory: ./openfortivpn-webview-electron
+      run: npm run dist
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.AppImage
+          ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.tar.xz

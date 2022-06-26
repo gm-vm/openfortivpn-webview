@@ -2,7 +2,8 @@
   "name": "openfortivpn-webview",
   "version": "1.0.0",
   "scripts": {
-    "start": "electron index.js"
+    "start": "electron index.js",
+    "dist": "electron-builder"
   },
   "main": "index.js",
   "private": true,
@@ -12,5 +13,14 @@
   },
   "dependencies": {
     "yargs": "17.4.1"
+  },
+  "build": {
+    "appId": "openfortivpn-webview",
+    "linux": {
+      "target": [
+        "AppImage",
+        "tar.xz"
+      ]
+    }
   }
 }
