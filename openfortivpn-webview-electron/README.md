@@ -15,7 +15,7 @@ npm install
 
 This is enough to launch the application with:
 ```shell
-node index.js
+npm start
 ```
 
 You can also build a package for your system using `electron-builder`.
