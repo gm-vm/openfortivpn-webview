@@ -23,6 +23,10 @@ const parser = yargs(hideBin(process.argv))
   .option('keep-open', {
       describe: 'Do not close the browser automatically.',
   })
+  .option('http-proxy', {
+      describe: 'HTTP Proxy in the format hostname:port',
+      type: "string",
+  })
   .help();
 
 const argv = parser.parse();
@@ -42,6 +46,11 @@ const urlBuilder = () => {
 };
 
 const urlRegex = RegExp(argv['url-regex'] ? argv['url-regex'] : defaultUrlRegex);
+
+if (argv['http-proxy']) {
+  process.stderr.write('Using proxy server ' + argv['http-proxy'] + '\n');
+  app.commandLine.appendSwitch('proxy-server', argv['http-proxy']);
+}
 
 app.whenReady().then(() => {
   const window = new BrowserWindow({ width: 800, height: 600 });
