@@ -54,3 +54,29 @@ QT_LOGGING_RULES="*=false;webview=true" QTWEBENGINE_CHROMIUM_FLAGS="--enable-log
 # If you use the Electron variant
 openfortivpn-webview --enable-logging --log-level=3 vpn-gateway
 ```
+
+## Proxy servers
+
+If you have to use an http proxy to access the vpn gateway or the SAML id
+provider, you can pass the `--proxy-server` option to Chromium.
+
+Note that when using the Electron variant, all command line options are
+also passed along to Chromium.
+
+```sh
+# If you use the Qt variant
+QTWEBENGINE_CHROMIUM_FLAGS="--proxy-server=proxy.example.com:8080" openfortivpn-webview vpn-gateway
+
+# If you use the Electron variant
+openfortivpn-webview vpn-gateway --proxy-server=proxy.example.com:8080
+```
+
+## Passing command line options when using `npm start`
+
+If you use `npm start` to start the Electron variant, you need to separate
+the command line options to the application from the command line options
+to npm using `--`, like this:
+
+```sh
+npm start myvpnhost -- --proxy-server=proxy.example.com:8080
+```

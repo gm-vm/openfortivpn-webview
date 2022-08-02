@@ -23,6 +23,10 @@ const parser = yargs(hideBin(process.argv))
   .option('keep-open', {
       describe: 'Do not close the browser automatically.',
   })
+  .option('proxy-server', {
+      describe: 'HTTP Proxy in the format hostname:port.',
+      type: "string",
+  })
   .help();
 
 const argv = parser.parse();
