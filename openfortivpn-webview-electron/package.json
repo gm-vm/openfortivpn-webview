@@ -8,8 +8,8 @@
   "main": "index.js",
   "private": true,
   "devDependencies": {
-    "electron": "^19.1.8",
-    "electron-builder": "^23.1.0"
+    "electron": "^22.0.0",
+    "electron-builder": "^23.6.0"
   },
   "dependencies": {
     "yargs": "17.4.1"
