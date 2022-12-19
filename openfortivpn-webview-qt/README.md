@@ -14,7 +14,7 @@ been tested with Qt 5.12.2.
 To build the application, go to the root of the project and run:
 ```shell
 qmake .
-# There should now be a Makefile if qmake has succeded
+# There should now be a Makefile if qmake has succeeded
 make
 ```
 
