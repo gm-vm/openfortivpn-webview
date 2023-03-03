@@ -27,6 +27,10 @@ const parser = yargs(hideBin(process.argv))
       describe: 'HTTP Proxy in the format hostname:port.',
       type: "string",
   })
+  .option('extra-ca-certs', {
+      describe: 'Path to a file with extra certificates. The file should consist of one or more trusted certificates in PEM format.',
+      type: "string",
+  })
   .help();
 
 const argv = parser.parse();
@@ -46,6 +50,45 @@ const urlBuilder = () => {
 };
 
 const urlRegex = RegExp(argv['url-regex'] ? argv['url-regex'] : defaultUrlRegex);
+
+if (argv['extra-ca-certs']) {
+
+  const pemHeader = '-----BEGIN CERTIFICATE-----';
+  const pemFooter = '-----END CERTIFICATE-----';
+
+  // The binary representation allows to easily compare certificates that use different line-endings.
+  let pemToBytes = pem => {
+    const start = pem.indexOf(pemHeader) + pemHeader.length;
+    const end = pem.indexOf(pemFooter);
+    return atob(pem.substring(start, end));
+  }
+
+  try {
+    const fileContent = require('fs').readFileSync(argv['extra-ca-certs'], 'utf8');
+    const certExtractionRegex = new RegExp(`${pemHeader}[^-]+${pemFooter}`, 'g');
+    const extraCaCerts = new Set(fileContent.match(certExtractionRegex).map(pem => pemToBytes(pem)));
+
+    let issuerPem = certificate => {
+      // issuerCert of self-signed certificates is undefined.
+      return certificate.issuerCert ? certificate.issuerCert.data : certificate.data;
+    }
+
+    app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+      if (
+        error === 'net::ERR_CERT_AUTHORITY_INVALID' &&
+        extraCaCerts.has(pemToBytes(issuerPem(certificate)))
+      ) {
+        event.preventDefault();
+        callback(true);
+      } else {
+        callback(false);
+      }
+    });
+  } catch (e) {
+    console.error(e.message);
+    process.exit(1);
+  }
+}
 
 app.whenReady().then(() => {
   const window = new BrowserWindow({ width: 800, height: 600 });
