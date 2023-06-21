@@ -9,7 +9,7 @@ stdout and exit.
 ## How to build
 
 The project requires the Qt framework to be installed and it has
-been tested with Qt 5.12.2.
+been tested with Qt 6.4.2.
 
 To build the application, go to the root of the project and run:
 ```shell
