@@ -24,6 +24,7 @@ private slots:
     void handleUrlChange(const QUrl &url);
 
 private:
+    QWebEngineProfile *webEngineProfile;
     QWebEngineView *webEngine;
     const QRegularExpression& urlToWaitForRegex;
     const bool keepOpen;
