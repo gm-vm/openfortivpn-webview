@@ -8,7 +8,7 @@
   "main": "index.js",
   "private": true,
   "devDependencies": {
-    "electron": "^22.0.0",
+    "electron": "^22.0.1",
     "electron-builder": "^23.6.0"
   },
   "dependencies": {
