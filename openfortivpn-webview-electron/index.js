@@ -137,6 +137,14 @@ app.whenReady().then(() => {
         label: "Clear data",
         click: () => { session.defaultSession.clearStorageData() },
       },
+      {
+        type: "separator",
+      },
+      {
+        label: 'Quit App',
+        accelerator: 'CmdOrCtrl+Q',
+        click: () => { app.quit() },
+      },
     ]
   },{
     label: "Edit",
