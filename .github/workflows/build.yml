@@ -5,9 +5,11 @@ on:
     tags: [ "v*-electron" ]
 
 jobs:
-  build:
+  build-linux:
 
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
     - name: Repository checkout
@@ -26,7 +28,7 @@ jobs:
 
     - name: Build the app
       working-directory: ./openfortivpn-webview-electron
-      run: npm run dist
+      run: npm run dist:linux
 
     - name: Release
       uses: softprops/action-gh-release@v1
@@ -34,3 +36,34 @@ jobs:
         files: |
           ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.AppImage
           ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.tar.xz
+
+  build-mac:
+
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Repository checkout
+      uses: actions/checkout@v3
+
+    - name: Install Node.js and npm
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+        cache: 'npm'
+        cache-dependency-path: ./openfortivpn-webview-electron/package-lock.json
+
+    - name: Install dependencies
+      working-directory: ./openfortivpn-webview-electron
+      run: npm install
+
+    - name: Build the app
+      working-directory: ./openfortivpn-webview-electron
+      run: npm run dist:mac
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.dmg
