@@ -1,5 +1,5 @@
 Application to perform the SAML single sing-on and easily retrieve the
-`SVPNCOOKIE` needed by `openfortivpn`.
+`SVPNCOOKIE` needed by [`openfortivpn`](https://github.com/adrienverge/openfortivpn/).
 
 The application will simply open the SAML page to let you sign in.
 As soon as the `SVPNCOOKIE` is set, the application will print it to
@@ -12,6 +12,9 @@ The application comes in two flavors:
 They should be equivalent, but `openfortivpn-webview-qt` may have
 some issues with some SAML providers.
 
+`openfortivpn-webview-electron` is readily available, see the
+[instructions](https://github.com/gm-vm/openfortivpn-webview/tree/main/openfortivpn-webview-electron#install)
+on how to install it.
 
 ## Usage
 
