@@ -26,6 +26,7 @@
     "mac": {
       "mergeASARs": false,
       "identity": null,
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
       "target": [
         {
           "target": "dmg",
