@@ -1,6 +1,9 @@
 const { app, BrowserWindow, session, Menu } = require('electron');
 const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
+const { Console } = require('console');
+
+const errorConsole = new Console(process.stderr);
 
 const defaultUrlRegex = '/sslvpn/portal\\.html';
 const cookieName = 'SVPNCOOKIE';
@@ -31,6 +34,10 @@ const parser = yargs(hideBin(process.argv))
       describe: 'Path to a file with extra certificates. The file should consist of one or more trusted certificates in PEM format.',
       type: "string",
   })
+  .option('trusted-cert', {
+      describe: 'The fingerprint of a certificate to always trust, even if invalid. The details of invalid certificates, fingerprint included, will be dumped in the console.',
+      type: "string",
+  })
   .help();
 
 const argv = parser.parse();
@@ -50,6 +57,20 @@ const urlBuilder = () => {
 };
 
 const urlRegex = RegExp(argv['url-regex'] ? argv['url-regex'] : defaultUrlRegex);
+
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+  if (argv['trusted-cert'] === certificate.fingerprint) { 
+    event.preventDefault();
+    callback(true);
+  } else {
+    errorConsole.error('Found an invalid certificate:');
+    errorConsole.dir(certificate, { depth: null });
+    errorConsole.error();
+    errorConsole.error('If you know that this certificate can be trusted, relaunch the application passing the following argument to ignore the error:');
+    errorConsole.error(`--trusted-cert='${certificate.fingerprint}'`);
+    process.exit(1);
+  }
+})
 
 if (argv['extra-ca-certs']) {
 
@@ -85,7 +106,7 @@ if (argv['extra-ca-certs']) {
       }
     });
   } catch (e) {
-    console.error(e.message);
+    errorConsole.error(e.message);
     process.exit(1);
   }
 }
