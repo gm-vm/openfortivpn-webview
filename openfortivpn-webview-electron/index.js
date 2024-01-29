@@ -31,6 +31,10 @@ const parser = yargs(hideBin(process.argv))
       describe: 'Path to a file with extra certificates. The file should consist of one or more trusted certificates in PEM format.',
       type: "string",
   })
+  .option('trusted-cert', {
+      describe: '[Danger Zone] Provide the fingerprint to ignore certificate errors.',
+      type: "string",
+  })
   .help();
 
 const argv = parser.parse();
@@ -50,6 +54,18 @@ const urlBuilder = () => {
 };
 
 const urlRegex = RegExp(argv['url-regex'] ? argv['url-regex'] : defaultUrlRegex);
+
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+  if (argv['trusted-cert'] === certificate.fingerprint) { 
+    event.preventDefault();
+    callback(true);
+  } else {
+    console.log('Connection is not secured:');
+    console.log(certificate);
+    console.log('Add argument --trusted-cert=' + certificate.fingerprint + ' to trust the certificate.');
+    process.exit(1);
+  }
+})
 
 if (argv['extra-ca-certs']) {
 
