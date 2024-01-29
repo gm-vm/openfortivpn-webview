@@ -32,7 +32,7 @@ const parser = yargs(hideBin(process.argv))
       type: "string",
   })
   .option('trusted-cert', {
-      describe: '[Danger Zone] Provide the fingerprint to ignore certificate errors.',
+      describe: 'The fingerprint of a certificate to always trust, even if invalid. The details of invalid certificates, fingerprint included, will be dumped in the console.',
       type: "string",
   })
   .help();
@@ -60,9 +60,11 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
     event.preventDefault();
     callback(true);
   } else {
-    console.log('Connection is not secured:');
-    console.log(certificate);
-    console.log('Add argument --trusted-cert=' + certificate.fingerprint + ' to trust the certificate.');
+    console.log('Found an invalid certificate:');
+    console.dir(certificate, { depth: null });
+    console.log();
+    console.log('If you know that this certificate can be trusted, relaunch the application passing the following argument to ignore the error:');
+    console.log(`--trusted-cert='${certificate.fingerprint}'`);
     process.exit(1);
   }
 })
