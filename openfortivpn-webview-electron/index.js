@@ -1,6 +1,9 @@
 const { app, BrowserWindow, session, Menu } = require('electron');
 const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
+const { Console } = require('console');
+
+const errorConsole = new Console(process.stderr);
 
 const defaultUrlRegex = '/sslvpn/portal\\.html';
 const cookieName = 'SVPNCOOKIE';
@@ -60,11 +63,11 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
     event.preventDefault();
     callback(true);
   } else {
-    console.log('Found an invalid certificate:');
-    console.dir(certificate, { depth: null });
-    console.log();
-    console.log('If you know that this certificate can be trusted, relaunch the application passing the following argument to ignore the error:');
-    console.log(`--trusted-cert='${certificate.fingerprint}'`);
+    errorConsole.error('Found an invalid certificate:');
+    errorConsole.dir(certificate, { depth: null });
+    errorConsole.error();
+    errorConsole.error('If you know that this certificate can be trusted, relaunch the application passing the following argument to ignore the error:');
+    errorConsole.error(`--trusted-cert='${certificate.fingerprint}'`);
     process.exit(1);
   }
 })
@@ -103,7 +106,7 @@ if (argv['extra-ca-certs']) {
       }
     });
   } catch (e) {
-    console.error(e.message);
+    errorConsole.error(e.message);
     process.exit(1);
   }
 }
