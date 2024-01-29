@@ -104,7 +104,15 @@ jobs:
           name "openfortivpn-webview"
           homepage "https://github.com/${{ github.repository_owner }}/openfortivpn-webview"
 
-          binary "#{staged_path}/openfortivpn-webview.app/Contents/MacOS/openfortivpn-webview"
+          wrapper_script = "#{staged_path}/openfortivpn-webview.sh"
+          binary wrapper_script, target: "openfortivpn-webview"
+
+          preflight do
+            File.write wrapper_script, <<~EOS
+              #!/bin/sh
+              "#{staged_path}/openfortivpn-webview.app/Contents/MacOS/openfortivpn-webview" "$@"
+            EOS
+          end
 
           zap trash: "~/Library/Application Support/openfortivpn-webview/"
         end
