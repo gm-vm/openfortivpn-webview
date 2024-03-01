@@ -31,6 +31,8 @@ int main(int argc, char *argv[])
     auto defaultUrlRegex = "/sslvpn/portal\\.html";
     auto urlRegexDescription = QString("A regex to detect the URL that needs to be visited before printing SVPNCOOKIE.\nThe default is \"%1\".").arg(defaultUrlRegex);
     auto optionUrlRegex = QCommandLineOption("url-regex", urlRegexDescription, "url-regex", defaultUrlRegex);
+    auto certificateToTrustDescription = QString("The fingerprint of a certificate to always trust, even if invalid. The details of invalid certificates, fingerprint included, will be dumped in the console.");
+    auto optionCertificateToTrust = QCommandLineOption("trusted-cert", certificateToTrustDescription, "trusted-cert");
 
     QCommandLineParser parser;
     parser.addPositionalArgument("host", "The VPN gateway host with an optional port.", "[host:port]");
@@ -38,6 +40,7 @@ int main(int argc, char *argv[])
     parser.addOption(optionUrlRegex);
     parser.addOption(optionUrl);
     parser.addOption(optionKeepOpen);
+    parser.addOption(optionCertificateToTrust);
     parser.addOption(QCommandLineOption("remote-debugging-port", "Remote debugging server port.", "port"));
     parser.addHelpOption();
     parser.addVersionOption();
@@ -70,7 +73,9 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    MainWindow w(keepOpen, urlRegex);
+    auto certificateToTrust = parser.value(optionCertificateToTrust);
+
+    MainWindow w(keepOpen, urlRegex, certificateToTrust);
     w.loadUrl(url);
     w.resize(1024, 760);
     w.move(findScreenWithCursor()->geometry().center() - w.rect().center());

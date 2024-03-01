@@ -7,6 +7,7 @@
 #include <QTextStream>
 #include <QWebEngineCookieStore>
 #include <QWebEngineHistory>
+#include <QWebEnginePage>
 #include <QWebEngineProfile>
 #include <QWebEngineView>
 #include <iostream>
@@ -15,14 +16,18 @@ Q_LOGGING_CATEGORY(category, "webview")
 
 MainWindow::MainWindow(const bool keepOpen,
                        const QRegularExpression& urlToWaitForRegex,
+                       const QString certificateHashToTrust,
                        QWidget *parent) :
     QMainWindow(parent),
+    webEnginePage(new QWebEnginePage()),
     webEngineProfile(new QWebEngineProfile("vpn", parent)),
     webEngine(new QWebEngineView(webEngineProfile, parent)),
     urlToWaitForRegex(urlToWaitForRegex),
+    certificateHashToTrust(certificateHashToTrust),
     keepOpen(keepOpen)
 {
     setCentralWidget(webEngine);
+    webEngine->setPage(webEnginePage);
 
     createMenuBar();
 
@@ -42,12 +47,15 @@ MainWindow::MainWindow(const bool keepOpen,
             &MainWindow::onCookieAdded);
     connect(webEngineProfile->cookieStore(), &QWebEngineCookieStore::cookieRemoved, this,
             &MainWindow::onCookieRemoved);
+
+    connect(webEnginePage, &QWebEnginePage::certificateError, this, &MainWindow::onCertificateError);
 }
 
 MainWindow::~MainWindow()
 {
     delete webEngine;
     delete webEngineProfile;
+    delete webEnginePage;
 }
 
 void MainWindow::loadUrl(const QString &url)
@@ -78,6 +86,22 @@ void MainWindow::onCookieRemoved(const QNetworkCookie &cookie)
         qCDebug(category) << "SVPNCOOKIE has been removed";
         svpncookie = QString();
     }
+}
+
+void MainWindow::onCertificateError(QWebEngineCertificateError certificateError) {
+    auto sha256base64 = certificateError.certificateChain().constFirst().digest(QCryptographicHash::Sha256).toBase64();
+    auto hashString = "sha256/" + sha256base64;
+    if (certificateHashToTrust == hashString) {
+        certificateError.acceptCertificate();
+        return;
+    }
+
+    qCDebug(category) << "Found an invalid certificate:";
+    for (auto& certificate : certificateError.certificateChain()) {
+        qCDebug(category).noquote() << certificate.toText();
+    }
+    qCDebug(category).noquote() << "If you know that this certificate can be trusted, relaunch the application passing the following argument to ignore the error:";
+    qCDebug(category).noquote() << "--trusted-cert='" + hashString + "'";
 }
 
 void MainWindow::handleUrlChange(const QUrl &url)
