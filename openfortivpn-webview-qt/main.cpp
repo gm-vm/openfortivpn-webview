@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         if (parser.positionalArguments().size() < 1) {
             parser.showHelp(1);
         }
-        url = "https://" + parser.positionalArguments()[0] + "/remote/saml/start";
+        url = "https://" + parser.positionalArguments().constFirst() + "/remote/saml/start";
         QString realm = parser.value(optionRealm);
         if (!realm.isEmpty()) {
             url += "?realm=" + realm;
