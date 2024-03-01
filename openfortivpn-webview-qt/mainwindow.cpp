@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QLoggingCategory>
 #include <QMenuBar>
+#include <QSslError>
 #include <QStandardPaths>
 #include <QTextStream>
 #include <QWebEngineCookieStore>
@@ -92,6 +93,16 @@ void MainWindow::onCertificateError(QWebEngineCertificateError certificateError)
     auto sha256base64 = certificateError.certificateChain().constFirst().digest(QCryptographicHash::Sha256).toBase64();
     auto hashString = "sha256/" + sha256base64;
     if (certificateHashToTrust == hashString) {
+        certificateError.acceptCertificate();
+        return;
+    }
+
+    // Check the certificate chain using the possibly updated QSslConfiguration (--extra-ca-certs).
+    // The documentation states that the CA should not be included in the chain, so here we remove it.
+    auto chainWithoutCa = certificateError.certificateChain();
+    chainWithoutCa.removeLast();
+    auto errors = QSslCertificate::verify(chainWithoutCa, certificateError.url().host());
+    if (errors.isEmpty()) {
         certificateError.acceptCertificate();
         return;
     }

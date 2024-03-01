@@ -5,6 +5,7 @@
 #include <QCursor>
 #include <QRect>
 #include <QScreen>
+#include <QSslConfiguration>
 #include <iostream>
 
 static QScreen *findScreenWithCursor()
@@ -31,6 +32,8 @@ int main(int argc, char *argv[])
     auto defaultUrlRegex = "/sslvpn/portal\\.html";
     auto urlRegexDescription = QString("A regex to detect the URL that needs to be visited before printing SVPNCOOKIE.\nThe default is \"%1\".").arg(defaultUrlRegex);
     auto optionUrlRegex = QCommandLineOption("url-regex", urlRegexDescription, "url-regex", defaultUrlRegex);
+    auto extraCaCertsDescription = QString("Path to a file with extra certificates. The file should consist of one or more trusted certificates in PEM format.");
+    auto optionExtraCaCerts = QCommandLineOption("extra-ca-certs", extraCaCertsDescription, "extra-ca-certs");
     auto certificateToTrustDescription = QString("The fingerprint of a certificate to always trust, even if invalid. The details of invalid certificates, fingerprint included, will be dumped in the console.");
     auto optionCertificateToTrust = QCommandLineOption("trusted-cert", certificateToTrustDescription, "trusted-cert");
 
@@ -40,6 +43,7 @@ int main(int argc, char *argv[])
     parser.addOption(optionUrlRegex);
     parser.addOption(optionUrl);
     parser.addOption(optionKeepOpen);
+    parser.addOption(optionExtraCaCerts);
     parser.addOption(optionCertificateToTrust);
     parser.addOption(QCommandLineOption("remote-debugging-port", "Remote debugging server port.", "port"));
     parser.addHelpOption();
@@ -71,6 +75,18 @@ int main(int argc, char *argv[])
     if (!urlRegex.isValid()) {
         std::cerr << "The given <url-regex> is not valid." << std::endl;
         exit(1);
+    }
+
+    auto extraCaCertsPath = parser.value(optionExtraCaCerts);
+    QList<QSslCertificate> extraCaCerts;
+    if (!extraCaCertsPath.isEmpty()) {
+        // Add the custom CA to QSslConfiguration so that later we can verify the chain with it.
+        extraCaCerts = QSslCertificate::fromPath(extraCaCertsPath, QSsl::Pem, QSslCertificate::PatternSyntax::FixedString);
+        QSslConfiguration configuration = QSslConfiguration::defaultConfiguration();
+        auto certs = configuration.caCertificates();
+        certs.append(extraCaCerts);
+        configuration.setCaCertificates(extraCaCerts);
+        QSslConfiguration::setDefaultConfiguration(configuration);
     }
 
     auto certificateToTrust = parser.value(optionCertificateToTrust);
