@@ -10,7 +10,7 @@
   "private": true,
   "devDependencies": {
     "electron": "^28.2.0",
-    "electron-builder": "^24.9.1"
+    "electron-builder": "^24.13.3"
   },
   "dependencies": {
     "yargs": "^17.7.2"
