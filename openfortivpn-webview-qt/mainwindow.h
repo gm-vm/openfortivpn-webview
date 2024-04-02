@@ -27,8 +27,8 @@ private slots:
     void handleUrlChange(const QUrl &url);
 
 private:
-    QWebEnginePage *webEnginePage;
     QWebEngineProfile *webEngineProfile;
+    QWebEnginePage *webEnginePage;
     QWebEngineView *webEngine;
     const QRegularExpression& urlToWaitForRegex;
     const QString certificateHashToTrust;
