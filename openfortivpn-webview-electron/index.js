@@ -5,7 +5,7 @@ const { Console } = require('console');
 
 const errorConsole = new Console(process.stderr);
 
-const defaultUrlRegex = '/sslvpn/portal\\.html';
+const defaultUrlRegex = '/sslvpn/portal';
 const cookieName = 'SVPNCOOKIE';
 
 const parser = yargs(hideBin(process.argv))
@@ -119,7 +119,7 @@ app.whenReady().then(() => {
 
   const tryPrintCookie = () => {
     if (shouldPrintCookie && svpncookie != null) {
-      process.stdout.write(`${cookieName}=${svpncookie}\n`);
+      process.stdout.write(`${svpncookie}\n`);
       if (!argv['keep-open']) {
         process.exit(0);
       }

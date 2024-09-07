@@ -67,7 +67,7 @@ void MainWindow::loadUrl(const QString &url)
 void MainWindow::onCookieAdded(const QNetworkCookie &cookie)
 {
     if (cookie.name() == "SVPNCOOKIE") {
-        svpncookie = QString(cookie.name()) + "=" + QString(cookie.value());
+        svpncookie = QString(cookie.value());
 
         qCDebug(category) << "SVPNCOOKIE has been received";
 
