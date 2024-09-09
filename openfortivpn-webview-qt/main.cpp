@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     auto optionRealm = QCommandLineOption("realm", "The authentication realm.", "realm");
     auto optionUrl = QCommandLineOption("url", "The already built SAML URL.\nThis takes precedence over [host:port].", "url");
     auto optionKeepOpen = QCommandLineOption("keep-open", "Do not close the browser automatically.");
-    auto defaultUrlRegex = "/sslvpn/portal";
+    auto defaultUrlRegex = "/sslvpn/portal(/|\\.html)";
     auto urlRegexDescription = QString("A regex to detect the URL that needs to be visited before printing SVPNCOOKIE.\nThe default is \"%1\".").arg(defaultUrlRegex);
     auto optionUrlRegex = QCommandLineOption("url-regex", urlRegexDescription, "url-regex", defaultUrlRegex);
     auto extraCaCertsDescription = QString("Path to a file with extra certificates. The file should consist of one or more trusted certificates in PEM format.");
