@@ -41,8 +41,7 @@ will in this case stay open and keep printing `SVPNCOOKIE` as its value
 changes, thus generating a stream of text.
 
 The application does not print `SVPNCOOKIE` until it finds a URL matching
-the regular expression passed to `--url-regex`. If no regular expression
-is specified, the application will look for URLs containing `/sslvpn/portal.html`.
+the regular expression passed to `--url-regex`.
 Waiting for such URL allows to deal with concurrent VPN sessions when the
 gateway is configured to allow a single active session.
 
