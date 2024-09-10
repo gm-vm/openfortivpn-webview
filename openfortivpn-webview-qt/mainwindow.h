@@ -18,6 +18,8 @@ public:
                         QWidget *parent = nullptr);
     ~MainWindow();
     void loadUrl(const QString &url);
+    void finish(const QString &svpncookie);
+    void paintEvent(QPaintEvent *);
 
 private slots:
     void onCookieAdded(const QNetworkCookie &cookie);
@@ -30,6 +32,7 @@ private:
     QWebEngineProfile *webEngineProfile;
     QWebEnginePage *webEnginePage;
     QWebEngineView *webEngine;
+    QPixmap *authSuccessPixmap;
     const QRegularExpression& urlToWaitForRegex;
     const QString certificateHashToTrust;
     const bool keepOpen;

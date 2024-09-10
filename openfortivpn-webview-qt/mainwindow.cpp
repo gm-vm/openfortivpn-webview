@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
+#include <QTimer>
+#include <QPainter>
 #include <QDebug>
 #include <QLoggingCategory>
 #include <QMenuBar>
@@ -23,12 +25,15 @@ MainWindow::MainWindow(const bool keepOpen,
     webEngineProfile(new QWebEngineProfile("vpn", parent)),
     webEnginePage(new QWebEnginePage(webEngineProfile)),
     webEngine(new QWebEngineView(webEngineProfile, parent)),
+    authSuccessPixmap(new QPixmap()),
     urlToWaitForRegex(urlToWaitForRegex),
     certificateHashToTrust(certificateHashToTrust),
     keepOpen(keepOpen)
 {
     setCentralWidget(webEngine);
     webEngine->setPage(webEnginePage);
+
+    authSuccessPixmap->load(":/auth_success.png");
 
     createMenuBar();
 
@@ -54,14 +59,34 @@ MainWindow::MainWindow(const bool keepOpen,
 
 MainWindow::~MainWindow()
 {
-    delete webEngine;
-    delete webEngineProfile;
     delete webEnginePage;
+    delete webEngineProfile;
+    delete webEngine;
+    delete authSuccessPixmap;
+}
+
+void MainWindow::paintEvent(QPaintEvent *)
+{
+    QPainter painter(this);
+    painter.drawPixmap(QRect(0, 0, 1024, 768), *authSuccessPixmap);
 }
 
 void MainWindow::loadUrl(const QString &url)
 {
     webEngine->setUrl(url);
+}
+
+void MainWindow::finish(const QString &svpncookie) {
+   bool hasCookieSet = !svpncookie.isEmpty();
+    if (hasCookieSet) {
+        std::cout << svpncookie.toStdString() << std::endl;
+    }
+    if (!keepOpen) {
+        webEngine->close();
+        QTimer::singleShot(5000, [hasCookieSet]() {
+                QApplication::exit(hasCookieSet ? 0 : 1);
+        });
+    }
 }
 
 void MainWindow::onCookieAdded(const QNetworkCookie &cookie)
@@ -71,12 +96,8 @@ void MainWindow::onCookieAdded(const QNetworkCookie &cookie)
 
         qCDebug(category) << "SVPNCOOKIE has been received";
 
-        // This should maybe also check that the cookie is not empty.
         if (didSeeUrlToWaitFor) {
-            std::cout << svpncookie.toStdString() << std::endl;
-            if (!keepOpen) {
-                QApplication::exit(0);
-            }
+            finish(svpncookie);
         }
     }
 }
@@ -124,13 +145,7 @@ void MainWindow::handleUrlChange(const QUrl &url)
     if (urlToWaitForRegex.match(url.toString()).hasMatch()) {
         qCDebug(category) << "The current URL matches the given regex";
         didSeeUrlToWaitFor = true;
-        bool hasCookieSet = !svpncookie.isEmpty();
-        if (hasCookieSet) {
-            std::cout << svpncookie.toStdString() << std::endl;
-        }
-        if (!keepOpen) {
-            QApplication::exit(hasCookieSet ? 0 : 1);
-        }
+        finish(svpncookie);
     }
 }
 

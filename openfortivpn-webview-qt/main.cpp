@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 
     MainWindow w(keepOpen, urlRegex, certificateToTrust);
     w.loadUrl(url);
-    w.resize(1024, 760);
+    w.resize(1024, 768);
     w.move(findScreenWithCursor()->geometry().center() - w.rect().center());
     w.show();
 

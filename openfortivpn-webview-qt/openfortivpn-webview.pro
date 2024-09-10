@@ -13,3 +13,6 @@ SOURCES += \
 
 HEADERS += \
     mainwindow.h
+
+RESOURCES += \
+    auth_success_image.qrc
