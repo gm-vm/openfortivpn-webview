@@ -13,6 +13,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(const bool keepOpen,
+                        const bool quiet,
                         const QRegularExpression& urlToWaitForRegex,
                         const QString certificateHashToTrust,
                         QWidget *parent = nullptr);
@@ -36,6 +37,7 @@ private:
     const QRegularExpression& urlToWaitForRegex;
     const QString certificateHashToTrust;
     const bool keepOpen;
+    const bool quiet;
     QString svpncookie;
     bool didSeeUrlToWaitFor = false;
 

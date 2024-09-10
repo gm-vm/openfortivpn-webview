@@ -18,6 +18,7 @@
 Q_LOGGING_CATEGORY(category, "webview")
 
 MainWindow::MainWindow(const bool keepOpen,
+                       const bool quiet,
                        const QRegularExpression& urlToWaitForRegex,
                        const QString certificateHashToTrust,
                        QWidget *parent) :
@@ -28,7 +29,8 @@ MainWindow::MainWindow(const bool keepOpen,
     authSuccessPixmap(new QPixmap()),
     urlToWaitForRegex(urlToWaitForRegex),
     certificateHashToTrust(certificateHashToTrust),
-    keepOpen(keepOpen)
+    keepOpen(keepOpen),
+    quiet(quiet)
 {
     setCentralWidget(webEngine);
     webEngine->setPage(webEnginePage);
@@ -69,6 +71,7 @@ void MainWindow::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.drawPixmap(QRect(0, 0, 1024, 768), *authSuccessPixmap);
+    painter.drawText(QRect(0, 200, 1024, 768), Qt::AlignCenter, "Authentication Successful\nYou can close this window, or it will close automatically in 5 seconds.");
 }
 
 void MainWindow::loadUrl(const QString &url)
@@ -82,6 +85,10 @@ void MainWindow::finish(const QString &svpncookie) {
         std::cout << svpncookie.toStdString() << std::endl;
     }
     if (!keepOpen) {
+        if (quiet) {
+            QApplication::exit(hasCookieSet ? 0 : 1);
+            return;
+        }
         webEngine->close();
         QTimer::singleShot(5000, [hasCookieSet]() {
                 QApplication::exit(hasCookieSet ? 0 : 1);

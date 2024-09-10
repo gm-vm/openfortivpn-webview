@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
     auto optionRealm = QCommandLineOption("realm", "The authentication realm.", "realm");
     auto optionUrl = QCommandLineOption("url", "The already built SAML URL.\nThis takes precedence over [host:port].", "url");
     auto optionKeepOpen = QCommandLineOption("keep-open", "Do not close the browser automatically.");
+    auto optionQuiet = QCommandLineOption("quiet", "Do not show authentication success window, exit immediately.");
     auto defaultUrlRegex = "/sslvpn/portal(/|\\.html)";
     auto urlRegexDescription = QString("A regex to detect the URL that needs to be visited before printing SVPNCOOKIE.\nThe default is \"%1\".").arg(defaultUrlRegex);
     auto optionUrlRegex = QCommandLineOption("url-regex", urlRegexDescription, "url-regex", defaultUrlRegex);
@@ -43,6 +44,7 @@ int main(int argc, char *argv[])
     parser.addOption(optionUrlRegex);
     parser.addOption(optionUrl);
     parser.addOption(optionKeepOpen);
+    parser.addOption(optionQuiet);
     parser.addOption(optionExtraCaCerts);
     parser.addOption(optionCertificateToTrust);
     parser.addOption(QCommandLineOption("remote-debugging-port", "Remote debugging server port.", "port"));
@@ -70,6 +72,7 @@ int main(int argc, char *argv[])
     }
 
     bool keepOpen = parser.isSet(optionKeepOpen);
+    bool quiet = parser.isSet(optionQuiet);
 
     auto urlRegex = QRegularExpression(parser.value(optionUrlRegex));
     if (!urlRegex.isValid()) {
@@ -91,7 +94,7 @@ int main(int argc, char *argv[])
 
     auto certificateToTrust = parser.value(optionCertificateToTrust);
 
-    MainWindow w(keepOpen, urlRegex, certificateToTrust);
+    MainWindow w(keepOpen, quiet, urlRegex, certificateToTrust);
     w.loadUrl(url);
     w.resize(1024, 768);
     w.move(findScreenWithCursor()->geometry().center() - w.rect().center());
