@@ -5,7 +5,7 @@ const { Console } = require('console');
 
 const errorConsole = new Console(process.stderr);
 
-const defaultUrlRegex = '/sslvpn/portal\\.html';
+const defaultUrlRegex = '/sslvpn/portal(/|\\.html)';
 const cookieName = 'SVPNCOOKIE';
 
 const parser = yargs(hideBin(process.argv))
