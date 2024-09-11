@@ -50,6 +50,10 @@ MainWindow::MainWindow(const bool keepOpen,
             &MainWindow::onCookieRemoved);
 
     connect(webEnginePage, &QWebEnginePage::certificateError, this, &MainWindow::onCertificateError);
+
+    // Show the window only once the page is fully loaded. In this way we won't even show it if the
+    // cookie is available immediately because of some existing session.
+    connect(webEnginePage, &QWebEnginePage::loadFinished, this, [this] { show(); }, Qt::SingleShotConnection);
 }
 
 MainWindow::~MainWindow()

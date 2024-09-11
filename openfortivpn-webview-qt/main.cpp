@@ -95,7 +95,6 @@ int main(int argc, char *argv[])
     w.loadUrl(url);
     w.resize(1024, 760);
     w.move(findScreenWithCursor()->geometry().center() - w.rect().center());
-    w.show();
 
     return app.exec();
 }
