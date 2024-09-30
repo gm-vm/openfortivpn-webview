@@ -1,6 +1,6 @@
 {
   "name": "openfortivpn-webview",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "scripts": {
     "start": "electron index.js",
     "dist:linux": "electron-builder --linux --x64 --arm64",
