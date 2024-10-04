@@ -36,8 +36,8 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.artifact.outputs.filename }}
-        path: ./build/distributions/content/*/*
+        name: openfortivpn-webview-linux
+        path: ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.*
 
   build-mac:
 
@@ -67,5 +67,5 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.artifact.outputs.filename }}
-        path: ./build/distributions/content/*/*
+        name: openfortivpn-webview-macos
+        path: ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.*
