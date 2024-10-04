@@ -3,8 +3,8 @@
   "version": "1.2.2",
   "homepage": "https://github.com/gm-vm/openfortivpn-webview",
   "author": {
-    "email": "test@example.org",
-    "name": "Test Example"
+    "email": "nobody@example.org",
+    "name": "Nobody"
   },
   "scripts": {
     "start": "electron index.js",
