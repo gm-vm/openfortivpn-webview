@@ -1,0 +1,131 @@
+name: Release
+
+on:
+  push:
+    tags: [ "v*-electron" ]
+
+jobs:
+  build-linux:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Repository checkout
+      uses: actions/checkout@v4
+
+    - name: Install build depndencies
+      run: |
+        sudo apt-get install --no-install-recommends -y gcc-multilib g++-multilib
+
+    - name: Install Node.js and npm
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: ./openfortivpn-webview-electron/package-lock.json
+
+    - name: Install npm dependencies
+      working-directory: ./openfortivpn-webview-electron
+      run: npm install
+
+    - name: Build the app
+      working-directory: ./openfortivpn-webview-electron
+      run: npm run dist:linux
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.*
+
+  build-mac:
+
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Repository checkout
+      uses: actions/checkout@v4
+
+    - name: Install Node.js and npm
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: ./openfortivpn-webview-electron/package-lock.json
+
+    - name: Install dependencies
+      working-directory: ./openfortivpn-webview-electron
+      run: npm install
+
+    - name: Build the app
+      working-directory: ./openfortivpn-webview-electron
+      run: npm run dist:mac
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.*
+
+    - name: Setup SSH
+      run: |
+        print_git_config() {
+        cat <<EOF
+        Host homebrew-repo
+          Hostname github.com
+          IdentityFile=~/.ssh/hombrew_repo
+        EOF
+        }
+
+        print_git_config >> ~/.ssh/config
+        echo "$GH_HOMEBREW_REPO_DEPLOY_KEY" > ~/.ssh/hombrew_repo
+        chmod 0644 ~/.ssh/config
+        chmod 0600 ~/.ssh/hombrew_repo
+      env:
+        GH_HOMEBREW_REPO_DEPLOY_KEY: ${{ secrets.GH_HOMEBREW_REPO_DEPLOY_KEY }}
+
+    - name: Update homebrew-repo
+      run: |
+        app_version=$(echo ${{ github.ref_name }} | sed -E 's/v([0-9.]+)-electron/\1/g')
+        sha256_arm=$(shasum -a 256 openfortivpn-webview-electron/dist/openfortivpn-webview-*-arm64.dmg | awk '{print $1}')
+        sha256_intel=$(shasum -a 256 openfortivpn-webview-electron/dist/openfortivpn-webview-*-x64.dmg | awk '{print $1}')
+
+        print_updated_cask() {
+        cat <<EOF
+        cask "openfortivpn-webview" do
+          arch arm: "arm64", intel: "x64"
+
+          version "$app_version"
+          sha256 arm:   "$sha256_arm",
+                 intel: "$sha256_intel"
+
+          url "https://github.com/${{ github.repository_owner }}/openfortivpn-webview/releases/download/v#{version}-electron/openfortivpn-webview-#{version}-#{arch}.dmg"
+          name "openfortivpn-webview"
+          homepage "https://github.com/${{ github.repository_owner }}/openfortivpn-webview"
+
+          wrapper_script = "#{staged_path}/openfortivpn-webview.sh"
+          binary wrapper_script, target: "openfortivpn-webview"
+
+          preflight do
+            File.write wrapper_script, <<~EOS
+              #!/bin/sh
+              "#{staged_path}/openfortivpn-webview.app/Contents/MacOS/openfortivpn-webview" "\$@"
+            EOS
+          end
+
+          zap trash: "~/Library/Application Support/openfortivpn-webview/"
+        end
+        EOF
+        }
+
+        git clone git@homebrew-repo:${{ github.repository_owner }}/homebrew-repo.git
+        cd homebrew-repo
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        print_updated_cask > Casks/openfortivpn-webview.rb
+        git commit Casks/openfortivpn-webview.rb -m "openfortivpn-webview $app_version"
+        git push origin main
