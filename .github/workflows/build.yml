@@ -1,0 +1,71 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Repository checkout
+      uses: actions/checkout@v4
+
+    - name: Install build depndencies
+      run: |
+        sudo apt-get install --no-install-recommends -y gcc-multilib g++-multilib
+
+    - name: Install Node.js and npm
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: ./openfortivpn-webview-electron/package-lock.json
+
+    - name: Install npm dependencies
+      working-directory: ./openfortivpn-webview-electron
+      run: npm install
+
+    - name: Build the app
+      working-directory: ./openfortivpn-webview-electron
+      run: npm run dist:linux
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.artifact.outputs.filename }}
+        path: ./build/distributions/content/*/*
+
+  build-mac:
+
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Repository checkout
+      uses: actions/checkout@v4
+
+    - name: Install Node.js and npm
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: ./openfortivpn-webview-electron/package-lock.json
+
+    - name: Install dependencies
+      working-directory: ./openfortivpn-webview-electron
+      run: npm install
+
+    - name: Build the app
+      working-directory: ./openfortivpn-webview-electron
+      run: npm run dist:mac
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.artifact.outputs.filename }}
+        path: ./build/distributions/content/*/*
