@@ -38,8 +38,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.AppImage
-          ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.tar.xz
+          ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.*
 
   build-mac:
 
@@ -70,7 +69,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.dmg
+          ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.*
 
     - name: Setup SSH
       run: |
