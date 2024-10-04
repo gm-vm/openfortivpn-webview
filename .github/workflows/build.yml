@@ -40,6 +40,7 @@ jobs:
         files: |
           ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.AppImage
           ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.tar.xz
+          ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.deb
 
   build-mac:
 
