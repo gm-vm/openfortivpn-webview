@@ -1,6 +1,11 @@
 {
   "name": "openfortivpn-webview",
   "version": "1.2.2",
+  "homepage": "https://github.com/gm-vm/openfortivpn-webview",
+  "author": {
+    "email": "nobody@example.org",
+    "name": "Nobody"
+  },
   "scripts": {
     "start": "electron index.js",
     "dist:linux": "electron-builder --linux --x64 --arm64",
@@ -18,10 +23,12 @@
   "build": {
     "appId": "openfortivpn-webview",
     "linux": {
+      "publish": null,
       "artifactName": "${productName}-${version}-${arch}.${ext}",
       "target": [
         "AppImage",
-        "tar.xz"
+        "tar.xz",
+        "deb"
       ]
     },
     "mac": {
