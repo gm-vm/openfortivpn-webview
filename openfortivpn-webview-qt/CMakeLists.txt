@@ -13,9 +13,19 @@ qt_add_executable(openfortivpn-webview
     mainwindow.cpp mainwindow.h
 )
 
+target_compile_definitions(openfortivpn-webview PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x060000
+)
+
 set_target_properties(openfortivpn-webview PROPERTIES
     WIN32_EXECUTABLE ON
     MACOSX_BUNDLE ON
 )
 
-target_link_libraries(openfortivpn-webview PRIVATE Qt6::WebEngineWidgets)
+target_link_libraries(openfortivpn-webview PRIVATE
+    Qt::Core
+    Qt::Gui
+    Qt::WebEngineWidgets
+    Qt::Widgets
+)
