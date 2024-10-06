@@ -14,6 +14,7 @@ been tested with Qt 6.4.2.
 ### With qmake
 To build the application, go to the root of the project and run:
 ```shell
+# If you installed Qt via a package manager, the binary may be qmake6.
 qmake .
 # There should now be a Makefile if qmake has succeeded
 make
