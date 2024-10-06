@@ -1,11 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QNetworkCookie>
+#include <QtWidgets/QMainWindow>
+#include <QtNetwork/QNetworkCookie>
 #include <QRegularExpression>
-#include <QWebEngineCertificateError>
-#include <QWebEngineView>
+#include <QtWebEngineCore/QWebEngineCertificateError>
+#include <QtWebEngineWidgets/QWebEngineView>
 
 class MainWindow : public QMainWindow
 {

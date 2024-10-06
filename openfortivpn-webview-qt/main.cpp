@@ -1,11 +1,11 @@
 #include "mainwindow.h"
-#include <QApplication>
+#include <QtWidgets/QApplication>
 #include <QCommandLineOption>
 #include <QCommandLineParser>
-#include <QCursor>
+#include <QtGui/QCursor>
 #include <QRect>
-#include <QScreen>
-#include <QSslConfiguration>
+#include <QtGui/QScreen>
+#include <QtNetwork/QSslConfiguration>
 #include <iostream>
 
 static QScreen *findScreenWithCursor()
