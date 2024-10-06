@@ -1,16 +1,16 @@
 #include "mainwindow.h"
-#include <QtWidgets/QApplication>
+#include <QApplication>
 #include <QDebug>
 #include <QLoggingCategory>
-#include <QtWidgets/QMenuBar>
-#include <QtNetwork/QSslError>
+#include <QMenuBar>
+#include <QSslError>
 #include <QStandardPaths>
 #include <QTextStream>
-#include <QtWebEngineCore/QWebEngineCookieStore>
-#include <QtWebEngineCore/QWebEngineHistory>
-#include <QtWebEngineCore/QWebEnginePage>
-#include <QtWebEngineCore/QWebEngineProfile>
-#include <QtWebEngineWidgets/QWebEngineView>
+#include <QWebEngineCookieStore>
+#include <QWebEngineHistory>
+#include <QWebEnginePage>
+#include <QWebEngineProfile>
+#include <QWebEngineView>
 #include <iostream>
 
 Q_LOGGING_CATEGORY(category, "webview")
