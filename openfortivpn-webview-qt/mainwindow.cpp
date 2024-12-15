@@ -54,6 +54,10 @@ MainWindow::MainWindow(const bool keepOpen,
     // Show the window only once the page is fully loaded. In this way we won't even show it if the
     // cookie is available immediately because of some existing session.
     connect(webEnginePage, &QWebEnginePage::loadFinished, this, [this] { show(); }, Qt::SingleShotConnection);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    connect(webEnginePage, &QWebEnginePage::webAuthUxRequested, this, &MainWindow::handleWebAuthUxRequested);
+#endif
 }
 
 MainWindow::~MainWindow()
@@ -171,3 +175,31 @@ void MainWindow::closeEvent(QCloseEvent *)
 {
     QApplication::exit(keepOpen ? 0 : 1);
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+void MainWindow::handleWebAuthUxRequested(QWebEngineWebAuthUxRequest *request)
+{
+    if (m_authDialog)
+        delete m_authDialog;
+
+    m_authDialog = new WebAuthDialog(request, window());
+    m_authDialog->setModal(false);
+    m_authDialog->setWindowFlags(m_authDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
+    connect(request, &QWebEngineWebAuthUxRequest::stateChanged, this, &MainWindow::onStateChanged);
+    m_authDialog->show();
+}
+
+void MainWindow::onStateChanged(QWebEngineWebAuthUxRequest::WebAuthUxState state)
+{
+    if (QWebEngineWebAuthUxRequest::WebAuthUxState::Completed == state
+        || QWebEngineWebAuthUxRequest::WebAuthUxState::Cancelled == state) {
+        if (m_authDialog) {
+            delete m_authDialog;
+            m_authDialog = nullptr;
+        }
+    } else {
+        m_authDialog->updateDisplay();
+    }
+}
+#endif

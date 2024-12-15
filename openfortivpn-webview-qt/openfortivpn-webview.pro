@@ -9,7 +9,12 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    webauthdialog.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    webauthdialog.h
+
+FORMS += \
+    webauthdialog.ui

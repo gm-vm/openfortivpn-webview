@@ -6,6 +6,9 @@
 #include <QRegularExpression>
 #include <QWebEngineCertificateError>
 #include <QWebEngineView>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+#include "webauthdialog.h"
+#endif
 
 class MainWindow : public QMainWindow
 {
@@ -25,6 +28,9 @@ private slots:
     void onCertificateError(QWebEngineCertificateError certificateError);
     void updateTitle(const QString &title);
     void handleUrlChange(const QUrl &url);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    void handleWebAuthUxRequested(QWebEngineWebAuthUxRequest *request);
+#endif
 
 private:
     QWebEngineProfile *webEngineProfile;
@@ -35,9 +41,16 @@ private:
     const bool keepOpen;
     QString svpncookie;
     bool didSeeUrlToWaitFor = false;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    WebAuthDialog *m_authDialog = nullptr;
+#endif
 
     void createMenuBar();
     void closeEvent(QCloseEvent *);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    void onStateChanged(QWebEngineWebAuthUxRequest::WebAuthUxState state);
+#endif
 };
 
 #endif // MAINWINDOW_H

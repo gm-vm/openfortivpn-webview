@@ -11,6 +11,7 @@ qt_standard_project_setup()
 qt_add_executable(openfortivpn-webview
     main.cpp
     mainwindow.cpp mainwindow.h
+    webauthdialog.cpp webauthdialog.h webauthdialog.ui
 )
 
 target_compile_definitions(openfortivpn-webview PRIVATE
