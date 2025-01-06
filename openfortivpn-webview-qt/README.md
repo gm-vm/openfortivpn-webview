@@ -1,4 +1,4 @@
-Application to perform the SAML single sing-on and easily retrieve the
+Application to perform the SAML single sign-on and easily retrieve the
 `SVPNCOOKIE` needed by `openfortivpn`.
 
 The application will simply open the SAML page to let you sign in.
