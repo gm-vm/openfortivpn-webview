@@ -8,10 +8,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets WebEngineWidgets)
 qt_standard_project_setup()
 
+if(${Qt6_VERSION} VERSION_GREATER_EQUAL 6.7)
+  list(APPEND WEB_AUTH_SOURCES webauthdialog.cpp webauthdialog.h webauthdialog.ui)
+endif()
+
 qt_add_executable(openfortivpn-webview
     main.cpp
     mainwindow.cpp mainwindow.h
-    webauthdialog.cpp webauthdialog.h webauthdialog.ui
+    ${WEB_AUTH_SOURCES}
 )
 
 target_compile_definitions(openfortivpn-webview PRIVATE
