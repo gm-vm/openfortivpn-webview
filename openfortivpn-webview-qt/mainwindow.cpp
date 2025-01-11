@@ -67,8 +67,8 @@ MainWindow::MainWindow(const bool keepOpen,
 MainWindow::~MainWindow()
 {
     delete webEngine;
-    delete webEngineProfile;
     delete webEnginePage;
+    delete webEngineProfile;
 }
 
 void MainWindow::loadUrl(const QString &url)
