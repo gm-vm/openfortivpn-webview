@@ -21,6 +21,7 @@ MainWindow::MainWindow(const bool keepOpen,
                        QWidget *parent) :
     QMainWindow(parent),
     webEngineProfile(new QWebEngineProfile("vpn", parent)),
+    webEnginePage(new QWebEnginePage(webEngineProfile)),
 #if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
     webEngine(new QWebEngineView(webEngineProfile, parent)),
 #else
