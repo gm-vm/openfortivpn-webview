@@ -14,7 +14,7 @@ SOURCES += \
 HEADERS += \
     mainwindow.h
 
-greaterThan(QT_VERSION, 6.6) {
+!lessThan(QT_VERSION, 6.7) {
     SOURCES += webauthdialog.cpp
     HEADERS += webauthdialog.h
     FORMS += webauthdialog.ui
