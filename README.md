@@ -1,3 +1,6 @@
+> [!NOTE]
+> `openfortivpn` now has a `--saml-login` option that allows to use any browser for the authentication.
+
 Application to perform the SAML single sign-on and easily retrieve the
 `SVPNCOOKIE` needed by [`openfortivpn`](https://github.com/adrienverge/openfortivpn/).
 
