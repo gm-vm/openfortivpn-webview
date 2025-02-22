@@ -26,6 +26,8 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+    app.setApplicationVersion(APPLICATION_VERSION);
+
     auto optionRealm = QCommandLineOption("realm", "The authentication realm.", "realm");
     auto optionUrl = QCommandLineOption("url", "The already built SAML URL.\nThis takes precedence over [host:port].", "url");
     auto optionKeepOpen = QCommandLineOption("keep-open", "Do not close the browser automatically.");
@@ -55,6 +57,10 @@ int main(int argc, char *argv[])
 
     if (parser.isSet("help")) {
         parser.showHelp(0);
+    }
+
+    if (parser.isSet("version")) {
+        parser.showVersion();
     }
 
     QString url = parser.value(optionUrl);

@@ -18,6 +18,9 @@ qt_add_executable(openfortivpn-webview
     ${WEB_AUTH_SOURCES}
 )
 
+file(STRINGS "version.txt" APPLICATION_VERSION)
+target_compile_definitions(openfortivpn-webview PUBLIC APPLICATION_VERSION="${APPLICATION_VERSION}")
+
 target_compile_definitions(openfortivpn-webview PRIVATE
     QT_DEPRECATED_WARNINGS
     QT_DISABLE_DEPRECATED_BEFORE=0x060000
