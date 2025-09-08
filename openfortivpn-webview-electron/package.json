@@ -14,7 +14,7 @@
   "main": "index.js",
   "private": true,
   "devDependencies": {
-    "electron": "^28.2.0",
+    "electron": "^35.7.5",
     "electron-builder": "^24.13.3"
   },
   "dependencies": {
