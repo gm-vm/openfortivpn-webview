@@ -34,7 +34,7 @@ jobs:
       run: npm run dist:linux
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: openfortivpn-webview-linux
         path: ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.*
@@ -65,7 +65,7 @@ jobs:
       run: npm run dist:mac
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: openfortivpn-webview-macos
         path: ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.*
