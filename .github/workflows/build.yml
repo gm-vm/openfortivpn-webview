@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Repository checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Install build depndencies
       run: |
@@ -47,7 +47,7 @@ jobs:
 
     steps:
     - name: Repository checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Install Node.js and npm
       uses: actions/setup-node@v6
