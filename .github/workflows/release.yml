@@ -35,7 +35,7 @@ jobs:
       run: npm run dist:linux
 
     - name: Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: |
           ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.*
@@ -66,7 +66,7 @@ jobs:
       run: npm run dist:mac
 
     - name: Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: |
           ./openfortivpn-webview-electron/dist/openfortivpn-webview-*.*
